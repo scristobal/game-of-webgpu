@@ -1,0 +1,35 @@
+{
+    "author": "",
+    "description": "",
+    "devDependencies": {
+        "@eslint/js": "10.0.0",
+        "@webgpu/types": "^0.1.44",
+        "eslint": "9.9.1",
+        "eslint-config-prettier": "^9.1.0",
+        "globals": "^15.9.0",
+        "hint": "^7.1.12",
+        "prettier": "^3.3.3",
+        "typescript": "^5.5.4",
+        "typescript-eslint": "^8.2.0",
+        "vite": "^5.4.1"
+    },
+    "keywords": [],
+    "license": "ISC",
+    "name": "webgpu",
+    "scripts": {
+        "build": "vite build",
+        "check": "run-s check:*",
+        "check:format": "prettier . --check",
+        "check:lint": "eslint",
+        "check:types": "tsc",
+        "dev": "vite --open",
+        "fix": "run-p fix:*",
+        "fix:format": "prettier . --write",
+        "fix:lint": "eslint --fix",
+        "fix:types": "ts-fix",
+        "preview": "vite preview --open",
+        "update": "npx npm-check-updates -i"
+    },
+    "type": "module",
+    "version": "1.0.0"
+}
