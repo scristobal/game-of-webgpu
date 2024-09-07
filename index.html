@@ -13,7 +13,13 @@
         <link rel="icon" type="image/png" href="/favicon.png" />
 
         <style>
+            main {
+                height: 100dvh;
+            }
             canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
                 image-rendering: pixelated;
             }
 
@@ -21,10 +27,6 @@
             /* https://stackoverflow.com/questions/69867152/how-to-disable-filtering-on-canvas-with-webgpu-context */
             .pixelated-workaround {
                 animation: fix-image-rendering-bug 0.0001s;
-            }
-
-            pre {
-                overflow: hidden;
             }
 
             @keyframes fix-image-rendering-bug {
@@ -38,41 +40,37 @@
     </head>
 
     <body>
-        <main class="container">
-            <canvas class="pixelated-workaround"> </canvas>
+        <canvas class="pixelated-workaround"> </canvas>
 
-            <div x-on:initerror.document="errorMessage = $event.detail" class="error-container" x-data="{ errorMessage: undefined }" x-show="errorMessage !== undefined">
-                <dialog open>
-                    <article>
-                        <header>
-                            <button aria-label="Close" rel="prev"></button>
-                            <p>
-                                <strong class="pico-color-red-350">Unfortunately your system failed to run this demo </strong>
-                            </p>
-                        </header>
+        <dialog open x-on:initerror.document="errorMessage = $event.detail" class="error-container" x-data="{ errorMessage: undefined }" x-show="errorMessage !== undefined">
+            <article>
+                <header>
+                    <button aria-label="Close" rel="prev"></button>
+                    <p>
+                        <strong class="pico-color-red-350">Unfortunately your system failed to run this demo </strong>
+                    </p>
+                </header>
 
-                        <p>As amazing as it is, WebGPU is still experimental and has (very) limited support.</p>
-                        <p>
-                            <a href="https://caniuse.com/webgpu">Maybe it is time to update your browser?</a>
-                        </p>
+                <p>As amazing as it is, WebGPU is still experimental and has (very) limited support.</p>
+                <p>
+                    <a href="https://caniuse.com/webgpu">Maybe it is time to update your browser?</a>
+                </p>
 
-                        <hr />
-                        <details closed>
-                            <summary>Detail</summary>
-                            <pre x-text="errorMessage"></pre>
-                        </details>
-                        <hr />
-                        <details closed>
-                            <summary>System Info</summary>
-                            <small x-text="navigator.userAgent"></small>
-                        </details>
-                        <hr />
-                        <footer>
-                            <a href="https://game-of-wasm.messy.page/">Go to Game-of-WASM</a>
-                        </footer>
-                    </article>
-                </dialog>
-            </div>
-        </main>
+                <hr />
+                <details closed>
+                    <summary>Detail</summary>
+                    <pre x-text="errorMessage"></pre>
+                </details>
+                <hr />
+                <details closed>
+                    <summary>System Info</summary>
+                    <small x-text="navigator.userAgent"></small>
+                </details>
+                <hr />
+                <footer>
+                    <a href="https://game-of-wasm.messy.page/">Go to Game-of-WASM</a>
+                </footer>
+            </article>
+        </dialog>
     </body>
 </html>
