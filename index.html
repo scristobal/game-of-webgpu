@@ -1,0 +1,78 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>Game of WebGPU</title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.red.min.css" />
+
+        <!-- icon -->
+        <link rel="icon" type="image/png" href="/favicon.png" />
+
+        <style>
+            canvas {
+                image-rendering: pixelated;
+            }
+
+            /* https://bugs.chromium.org/p/chromium/issues/detail?id=993762 */
+            /* https://stackoverflow.com/questions/69867152/how-to-disable-filtering-on-canvas-with-webgpu-context */
+            .pixelated-workaround {
+                animation: fix-image-rendering-bug 0.0001s;
+            }
+
+            pre {
+                overflow: hidden;
+            }
+
+            @keyframes fix-image-rendering-bug {
+                to {
+                    opacity: 1;
+                }
+            }
+        </style>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="index.ts" type="module"></script>
+    </head>
+
+    <body>
+        <main class="container">
+            <canvas class="pixelated-workaround"> </canvas>
+
+            <div x-on:initerror.document="errorMessage = $event.detail" class="error-container" x-data="{ errorMessage: undefined }" x-show="errorMessage !== undefined">
+                <dialog open>
+                    <article>
+                        <header>
+                            <button aria-label="Close" rel="prev"></button>
+                            <p>
+                                <strong class="pico-color-red-350">Unfortunately your system failed to run this demo </strong>
+                            </p>
+                        </header>
+
+                        <p>As amazing as it is, WebGPU is still experimental and has (very) limited support.</p>
+                        <p>
+                            <a href="https://caniuse.com/webgpu">Maybe it is time to update your browser?</a>
+                        </p>
+
+                        <hr />
+                        <details closed>
+                            <summary>Detail</summary>
+                            <pre x-text="errorMessage"></pre>
+                        </details>
+                        <hr />
+                        <details closed>
+                            <summary>System Info</summary>
+                            <small x-text="navigator.userAgent"></small>
+                        </details>
+                        <hr />
+                        <footer>
+                            <a href="https://game-of-wasm.messy.page/">Go to Game-of-WASM</a>
+                        </footer>
+                    </article>
+                </dialog>
+            </div>
+        </main>
+    </body>
+</html>
