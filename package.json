@@ -2,7 +2,7 @@
     "author": "",
     "description": "",
     "devDependencies": {
-        "@eslint/js": "10.0.0",
+        "@eslint/js": "9.10.0",
         "@webgpu/types": "^0.1.44",
         "@yutengjing/ts-fix": "^0.0.1",
         "eslint": "9.10.0",
