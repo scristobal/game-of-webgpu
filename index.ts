@@ -2,14 +2,9 @@
 // https://codelabs.developers.google.com/your-first-webgpu-app
 
 async function gameOfWebGPU() {
-    // Initialization and checks
-
-    // get adapter
-    if (!navigator.gpu) throw new Error('WebGPU not supported on this browser');
-
-    const adapter = await navigator.gpu.requestAdapter();
-
-    if (!adapter) throw new Error('No appropriate GPUAdapter found. Most likely WebGPU not supported on this browser.');
+    // initialization and checks
+    const adapter = await navigator.gpu?.requestAdapter();
+    if (!adapter) throw 'WebGPU not supported.';
 
     // use adapter to get device
     const device = await adapter.requestDevice();
@@ -18,7 +13,6 @@ async function gameOfWebGPU() {
     const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
 
     const canvas = document.querySelector('canvas');
-
     if (!canvas) throw new Error('No canvas found, be sure to include a <canvas> element in your HTML');
 
     const scale = 1;
@@ -27,8 +21,7 @@ async function gameOfWebGPU() {
     canvas.height = window.innerHeight - (window.innerHeight % scale);
 
     const context = canvas.getContext('webgpu');
-
-    if (!context) throw new Error('No WebGPU context found. Most likely WebGPU not supported on this browser.');
+    if (!context) throw 'WebGPU not supported.';
 
     context.configure({
         device: device,
@@ -74,14 +67,8 @@ async function gameOfWebGPU() {
     }
     device.queue.writeBuffer(cellStateStorage[0], 0, cellStateArray);
 
-    // prettier-ignore
-    // each vertex has two coordinates (x,y) followed by 4 floats representing the color: (r, g, b ,a)
-    const vertices = new Float32Array([
-     1,  1,    0, 0, 0, 1,
-     1, -1,    0, 0, 0, 1,
-    -1, -1,    0, 0, 0, 1,
-    -1,  1,    0, 0, 0, 1
-])
+    // each row contains a vertex data in the form (x, y, r, g, b, a), eg. position, color
+    const vertices = new Float32Array([1, 1, 0, 0, 0, 1, 1, -1, 0, 0, 0, 1, -1, -1, 0, 0, 0, 1, -1, 1, 0, 0, 0, 1]);
 
     // copy data into the GPU
     const vertexBuffer: GPUBuffer = device.createBuffer({
@@ -120,9 +107,7 @@ async function gameOfWebGPU() {
 
     const indexFormat: GPUIndexFormat = 'uint32';
 
-    // Cell drawing shaders
-
-    // this shaders are used to render the board
+    // Cell drawing shaders this shaders are used to render the board
     const cellRenderShaderModule = device.createShaderModule({
         label: 'Cell shader',
         code: /* wgsl */ `
@@ -225,9 +210,8 @@ async function gameOfWebGPU() {
     `
     });
 
-    // Glueing all together in a pipeline, this is were
-    // the magic happens, combine shaders, data/layout and target
-
+    // Glueing all together in a pipeline, first define the memory layout
+    //
     // creates a bind group for our uniforms, binds will reflect in the `@bindings` inside a `@group`
     // because GPUBindGroupLayout is defined without attaching to a BindGroup yet
     const gridBindGroupLayout: GPUBindGroupLayout = device.createBindGroupLayout({
@@ -339,7 +323,6 @@ async function gameOfWebGPU() {
     });
 
     // Render loop
-
     return function main() {
         // a new encoder is required every update
         const encoder = device.createCommandEncoder();

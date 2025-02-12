@@ -1,28 +1,22 @@
 {
-    "author": "",
-    "description": "",
+    "name": "webgpu",
+    "version": "1.0.0",
+    "type": "module",
     "devDependencies": {
-        "@eslint/js": "9.17.0",
-        "@webgpu/types": "^0.1.52",
+        "@eslint/js": "9.20.0",
+        "@webgpu/types": "^0.1.54",
         "@yutengjing/ts-fix": "^0.0.1",
-        "eslint": "9.17.0",
-        "eslint-config-prettier": "^9.1.0",
+        "eslint": "9.20.1",
+        "eslint-config-prettier": "^10.0.1",
         "globals": "^15.14.0",
         "hint": "^7.1.13",
-        "npm-check-updates": "^17.1.13",
+        "npm-check-updates": "^17.1.14",
         "npm-run-all": "^4.1.5",
-        "nvm-auto": "^1.2.0",
-        "prettier": "^3.4.2",
-        "typescript": "^5.7.2",
-        "typescript-eslint": "^8.19.0",
-        "vite": "^6.0.7"
+        "prettier": "^3.5.0",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.24.0",
+        "vite": "^6.1.0"
     },
-    "engines": {
-        "node": ">=20.0.0"
-    },
-    "keywords": [],
-    "license": "ISC",
-    "name": "webgpu",
     "scripts": {
         "build": "vite build",
         "check": "run-p check:*",
@@ -34,10 +28,7 @@
         "fix:format": "prettier . --write",
         "fix:lint": "eslint --fix",
         "fix:types": "ts-fix",
-        "nvm": "nvm-auto",
         "preview": "vite preview --open",
         "update": "npm-check-updates -i"
-    },
-    "type": "module",
-    "version": "1.0.0"
+    }
 }
