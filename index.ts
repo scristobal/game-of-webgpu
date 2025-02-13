@@ -1,5 +1,6 @@
-// Adapted from sample GPU app from Google's I/O 2023
-// https://codelabs.developers.google.com/your-first-webgpu-app
+// Adapted from https://codelabs.developers.google.com/your-first-webgpu-app
+import cellShader from './cell.wgsl?raw'
+import simulationShader from './simulation.wgsl?raw'
 
 async function gameOfWebGPU() {
     // initialization and checks
@@ -68,7 +69,7 @@ async function gameOfWebGPU() {
     device.queue.writeBuffer(cellStateStorage[0], 0, cellStateArray);
 
     // each row contains a vertex data in the form (x, y, r, g, b, a), eg. position, color
-    const vertices = new Float32Array([1, 1, 0, 0, 0, 1, 1, -1, 0, 0, 0, 1, -1, -1, 0, 0, 0, 1, -1, 1, 0, 0, 0, 1]);
+    const vertices = new Float32Array([/* v_1 */ 1, 1, 0, 0, 0, 1, /* v_2 */ 1, -1, 0, 0, 0, 1, /* v_3 */ -1, -1, 0, 0, 0, 1, /* v_4 */ -1, 1, 0, 0, 0, 1]);
 
     // copy data into the GPU
     const vertexBuffer: GPUBuffer = device.createBuffer({
@@ -110,104 +111,13 @@ async function gameOfWebGPU() {
     // Cell drawing shaders this shaders are used to render the board
     const cellRenderShaderModule = device.createShaderModule({
         label: 'Cell shader',
-        code: /* wgsl */ `
-        @group(0) @binding(0) var<uniform> grid_size: vec2<f32>;
-        @group(1) @binding(0) var<storage> cell_state: array<u32>;
-
-        struct VertexIn {
-            @location(0) position: vec2<f32>,
-            @location(1) color: vec4<f32>,
-            @builtin(instance_index) instance: u32
-        }
-
-        struct VertexOut {
-            @builtin(position) position : vec4<f32>,
-            @location(1) color : vec4<f32>
-        }
-
-        @vertex
-        fn vertex_main(input: VertexIn) -> VertexOut
-        {
-            var output : VertexOut;
-
-            let state = f32(cell_state[input.instance]);
-
-            let i = f32(input.instance);
-            let cell = vec2<f32>( i % grid_size.x, floor(i / grid_size.x));
-
-            let cell_offset = cell / ( grid_size) * 2 ;
-            let grid_position = (input.position*state + 1) / grid_size - 1 + cell_offset;
-
-            output.position = vec4<f32>(grid_position, 0, 1);
-            output.color = input.color;
-            return output;
-        }
-
-        @fragment
-        fn fragment_main(fragData: VertexOut) -> @location(0) vec4<f32>
-        {
-            return fragData.color;
-        }
-`
+        code: cellShader
     });
-
-    // in this case arbitrary, in general same workgroup can share memory and synchronize
-    // rule of thumb is size of 64, in this case 8*8
-    const WORKGROUP_SIZE = 16;
-
-    // used later in the render loop
-    const workgroupCount = Math.ceil(GRID_SIZE_X / WORKGROUP_SIZE);
 
     // this shader is used to evolve the board state
     const cellSimulationShaderModule = device.createShaderModule({
         label: 'Game of Life simulation shader',
-        code: /* wgsl */ `
-        @group(0) @binding(0) var<uniform> grid_size: vec2<f32>;
-
-        @group(1) @binding(0) var<storage> cell_state_in: array<u32>;
-        @group(1) @binding(1) var<storage, read_write> cell_state_out: array<u32>;
-
-        fn cell_index(cell: vec2u) -> u32 {
-            return (cell.y % u32(grid_size.y)) * u32(grid_size.x) + (cell.x % u32(grid_size.x));
-        }
-
-        fn cell_active(x: u32, y: u32) -> u32 {
-            return cell_state_in[cell_index(vec2(x, y))];
-        }
-
-        fn active_neighbors(cell: vec3u) -> u32 {
-            return cell_active(cell.x+1, cell.y+1) +
-                cell_active(cell.x+1, cell.y) +
-                cell_active(cell.x+1, cell.y-1) +
-                cell_active(cell.x, cell.y-1) +
-                cell_active(cell.x-1, cell.y-1) +
-                cell_active(cell.x-1, cell.y) +
-                cell_active(cell.x-1, cell.y+1) +
-                cell_active(cell.x, cell.y+1);
-        }
-
-        @compute
-        @workgroup_size(${WORKGROUP_SIZE}, ${WORKGROUP_SIZE})
-        fn compute_main(@builtin(global_invocation_id) cell: vec3u) {
-
-            let num_active = active_neighbors(cell);
-
-            let i = cell_index(cell.xy);
-
-            // Conway's game of life rules:
-            switch num_active {
-                case 2u: { // Active cells with 2 neighbors stay the same.
-                    cell_state_out[i] = cell_state_in[i];
-                }
-                case 3u: { // Cells with 3 neighbors become or stay active.
-                    cell_state_out[i] = 1u;
-                }
-                default: { // Cells with < 2 or > 3 neighbors become inactive.
-                    cell_state_out[i] = 0u;
-                }
-            }
-        }
-    `
+        code: simulationShader
     });
 
     // Glueing all together in a pipeline, first define the memory layout
@@ -335,7 +245,7 @@ async function gameOfWebGPU() {
         computePass.setBindGroup(0, gridBindGroup);
         computePass.setBindGroup(1, cellComputeBindGroup);
 
-        computePass.dispatchWorkgroups(workgroupCount, workgroupCount); // <- equivalent of draw for render passes
+        computePass.dispatchWorkgroups(128, 128); // <- equivalent of draw for render passes
 
         computePass.end();
 
