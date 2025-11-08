@@ -7,7 +7,7 @@
         "@webgpu/types": "^0.1.54",
         "@yutengjing/ts-fix": "^0.0.1",
         "eslint": "9.20.1",
-        "eslint-config-prettier": "^10.0.1",
+        "eslint-config-prettier": "^10.1.8",
         "globals": "^15.14.0",
         "hint": "^7.1.13",
         "npm-check-updates": "^17.1.14",
