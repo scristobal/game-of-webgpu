@@ -5,22 +5,20 @@
     "devDependencies": {
         "@biomejs/biome": "2.3.4",
         "@webgpu/types": "^0.1.66",
-        "@yutengjing/ts-fix": "^0.0.1",
         "globals": "^16.5.0",
         "npm-run-all": "^4.1.5",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.46.3",
         "vite": "^7.2.2"
     },
     "scripts": {
         "build": "vite build",
         "check": "run-p check:*",
         "check:biome": "biome check",
-        "check:ts": "tsc",
+        "check:tsc": "tsc",
         "dev": "vite --open",
         "fix": "run-s fix:*",
         "fix:biome": "biome check --write",
-        "fix:ts": "ts-fix",
-        "preview": "vite preview --open"
+        "preview": "vite preview --open",
+        "clean": "rm -rf node_modules dist"
     }
 }
