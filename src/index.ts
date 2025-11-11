@@ -1,6 +1,6 @@
 // Adapted from https://codelabs.developers.google.com/your-first-webgpu-app
-import cellShader from './cell.wgsl?raw';
-import simulationShader from './simulation.wgsl?raw';
+import cellShader from './shaders/cell.wgsl?raw';
+import simulationShader from './shaders/simulation.wgsl?raw';
 
 async function gameOfWebGPU() {
     // initialization and checks
